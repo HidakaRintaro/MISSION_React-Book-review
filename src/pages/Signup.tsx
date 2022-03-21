@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export const SignUp: React.FC = () => {
   console.log('sing up')
   return (
@@ -36,6 +38,11 @@ export const SignUp: React.FC = () => {
           >
             新規登録
           </button>
+        </div>
+        <div className="mt-4 text-center text-sm">
+          <Link to="/login" className="text-emerald-500 hover:underline">
+            ログインへ
+          </Link>
         </div>
       </form>
     </div>
