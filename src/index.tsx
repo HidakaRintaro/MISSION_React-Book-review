@@ -1,12 +1,21 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { render } from 'react-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals'
+import { SignUp } from './pages/Signup'
+import { Login } from './pages/Login'
 
-ReactDOM.render(
+const rootElement = document.getElementById('root')
+render(
   <React.StrictMode>
-    <p>mission book review app</p>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
-  document.getElementById('root')
+  rootElement
 )
 
 // If you want to start measuring performance in your app, pass a function
