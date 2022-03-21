@@ -24,7 +24,8 @@
     "lint": "eslint --ext .ts,.tsx ./src",
     "fix": "yarn format && yarn lint:fix",
     "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx}'"
+    "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx}'",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
@@ -59,16 +60,9 @@
     "prettier": "^2.6.0"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "eslint--ext .tsx --ext .ts ./src --fix"
-    ],
-    "./src/**": [
-      "prettier --write ."
+    "*.{js,ts,jsx,tsx}": [
+      "eslint --fix",
+      "prettier --write"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   }
 }
