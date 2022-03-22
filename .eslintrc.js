@@ -53,6 +53,8 @@ module.exports = {
       2,
       { namedComponents: 'arrow-function', unnamedComponents: 'arrow-function' },
     ],
+    // MEMO: reduxの state.value = action.payload で代入ができないため
+    'no-param-reassign': ['error', { props: false }],
   },
   settings: {
     'import/resolver': {
