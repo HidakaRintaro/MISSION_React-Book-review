@@ -1,19 +1,21 @@
-import { ChangeEventHandler, useState } from 'react'
+import { ChangeEventHandler } from 'react'
 import { Link } from 'react-router-dom'
+import { setEmail, setName, setPassword } from '~/store/auth'
+import { useAppDispatch, useAppSelector } from '~/store/hook'
 
 export const SignUp: React.FC = () => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const dispatch = useAppDispatch()
+  const auth = useAppSelector((state) => state.auth)
+  const { name, email, password } = auth
 
   const handleChangeName: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setName(event.target.value)
+    dispatch(setName(event.target.value))
   }
   const handleChangeEmail: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setEmail(event.target.value)
+    dispatch(setEmail(event.target.value))
   }
   const handleChangePassword: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setPassword(event.target.value)
+    dispatch(setPassword(event.target.value))
   }
   const handleSubmitSignUp = () => {
     console.log({ name, email, password })
