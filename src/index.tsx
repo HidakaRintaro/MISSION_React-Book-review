@@ -2,20 +2,25 @@ import React from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import '~/index.css'
+import reportWebVitals from '~/reportWebVitals'
+import { store } from '~/store'
+import { Provider } from 'react-redux'
+
 import { Login } from '~/pages/Login'
 import { SignUp } from '~/pages/SignUp'
-import reportWebVitals from '~/reportWebVitals'
 
 const rootElement = document.getElementById('root')
 render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <React.StrictMode>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
+    </React.StrictMode>
+  </Provider>,
   rootElement
 )
 
