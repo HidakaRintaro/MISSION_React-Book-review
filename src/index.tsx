@@ -1,10 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import reportWebVitals from './reportWebVitals'
-import './index.css'
-import { SignUp } from './pages/Signup'
-import { Login } from './pages/Login'
+import reportWebVitals from '~/reportWebVitals'
+import '~/index.css'
+import { SignUp } from '~/pages/Signup'
+import { Login } from '~/pages/Login'
 
 const rootElement = document.getElementById('root')
 render(
