@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import reportWebVitals from '~/reportWebVitals'
 import '~/index.css'
@@ -7,7 +7,8 @@ import { SignUp } from '~/pages/Signup'
 import { Login } from '~/pages/Login'
 
 const rootElement = document.getElementById('root')
-render(
+const root = createRoot(rootElement as HTMLElement)
+root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
@@ -15,8 +16,7 @@ render(
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>
-  </React.StrictMode>,
-  rootElement
+  </React.StrictMode>
 )
 
 // If you want to start measuring performance in your app, pass a function
