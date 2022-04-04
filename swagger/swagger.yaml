@@ -1,0 +1,648 @@
+swagger: "2.0"
+info:
+  description: "TechTrain Railway Missionで使用する書籍API（仮）"
+  version: "1.0.0"
+  title: "TechTrain Railway Mission"
+host: "api-for-missions-and-railways.herokuapp.com"
+tags:
+  - name: "user"
+    description: "ユーザ関連API"
+  - name: "book"
+    description: "書籍関連API"
+schemes:
+  - "https"
+paths:
+  /signin:
+    post:
+      tags:
+        - "user"
+      summary: "ユーザ認証API"
+      description: "ユーザ認証を行います。\n
+      ユーザのメールアドレス・パスワードによるBasic認証を行い、認証済みユーザには認証トークンを返却します。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/SigninRequest"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/SigninResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+  /users:
+    post:
+      tags:
+        - "user"
+      summary: "ユーザ情報作成API"
+      description: "ユーザ情報を作成します。\n
+      ユーザの名前情報、メールアドレス、パスワードをリクエストで受け取り、ユーザIDと認証用のトークンを生成しデータベースへ保存します。\n
+      生成された認証用のトークンがレスポンスとして返されます。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/UserCreateRequest"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/UserCreateResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+    get:
+      tags:
+        - "user"
+      summary: "ユーザ情報取得API"
+      description: "ユーザ情報（ユーザ名）を取得します。\n
+      Authorizationヘッダーに認証情報（JWTトークン）を `Bearer XXX` の形式で付与することで、認証処理やユーザ情報の検索を行います。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "認証トークン(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/UserGetResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+    put:
+      tags:
+        - "user"
+      summary: "ユーザ情報更新API"
+      description: "ユーザ情報（ユーザ名）の更新をします。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "認証トーク(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/UserUpdateRequest"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/UserUpdateResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+            
+  /public/books:
+    get:
+      tags:
+        - "book"
+      summary: "書籍一覧取得API(認証なし)"
+      description: "書籍一覧を取得します。\n
+          10件ずつしかデータが返ってこないため、次の10件を取得したい場合はクエリパラメータの `offset` に何番目のデータまでは取得したのかを指定しなくてはなりません。\n
+          例）21件目のデータから取得したい場合は、 `/books/public?offset=20` となります。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: "offset"
+          description: "何番目のから10件取得するか"
+          required: false
+          type: "string"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/bookListPublicResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+  /books:
+    get:
+      tags:
+        - "book"
+      summary: "書籍一覧取得API(認証あり)"
+      description: "書籍一覧を取得します。\n
+          10件ずつしかデータが返ってこないため、次の10件を取得したい場合はクエリパラメータの `offset` に何番目のデータまでは取得したのかを指定しなくてはなりません。\n
+          例）21件目のデータから取得したい場合は、 `/books?offset=20` となります。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "認証トーク(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+        - in: "query"
+          name: "offset"
+          description: "何番目のから10件取得するか"
+          required: false
+          type: "string"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/bookListGetResponse"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+    post:
+      tags:
+        - "book"
+      summary: "書籍投稿API"
+      description: "書籍の新規作成をします。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "認証トークン(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/bookCreateRequest"
+      responses:
+        200:
+          "description": "A successful response."
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+  /books/{id}:
+    get:
+      tags:
+        - "book"
+      summary: "書籍取得API"
+      description: "書籍情報を取得します。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "認証トーク(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+        - in: "path"
+          name: "id"
+          required: true
+          type: "string"
+          description: "書籍ID"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/bookGetResponse"
+        404:
+          description: "Not found error"
+          schema:
+            $ref: "#/definitions/NotFoundError"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+    put:
+      tags:
+        - "book"
+      summary: "書籍更新API"
+      description: "書籍の更新をします。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+          type: "string"
+          description: "書籍ID"
+        - in: "header"
+          name: "Authorization"
+          description: "認証トーク(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+        - in: "body"
+          name: "body"
+          description: "Request Body"
+          required: true
+          schema:
+            $ref: "#/definitions/bookUpdateRequest"
+      responses:
+        200:
+          "description": "A successful response."
+          "schema":
+            "$ref": "#/definitions/bookUpdateResponse"
+        404:
+          description: "Not found error"
+          schema:
+            $ref: "#/definitions/NotFoundError"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+    delete:
+      tags:
+        - "book"
+      summary: "書籍削除API"
+      description: "書籍の削除をします。"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "path"
+          name: "id"
+          required: true
+          type: "string"
+          description: "書籍ID"
+        - in: "header"
+          name: "Authorization"
+          description: "認証トーク(JWT) `Bearer XXX`"
+          required: true
+          type: "string"
+      responses:
+        200:
+          "description": "A successful response."
+        404:
+          description: "Not found error"
+          schema:
+            $ref: "#/definitions/NotFoundError"
+        401:
+          "description": "Unauthorized error"
+          schema:
+            $ref: "#/definitions/UnauthorizedError"
+        400:
+          description: "Requested data was wrong"
+          schema:
+            $ref: "#/definitions/BadRequestError"
+        500:
+          description: "Internal server error"
+          schema:
+            $ref: "#/definitions/InternalServerError"
+
+definitions:
+  SigninRequest:
+    type: "object"
+    properties:
+      email:
+        type: "string"
+        description: "メールアドレス"
+      password:
+        type: "string"
+        description: "パスワード"
+  SigninResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+        description: "クライアント側で保存するトークン"
+  UserCreateRequest:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "ユーザ名"
+      email:
+        type: "string"
+        description: "メールアドレス"
+      password:
+        type: "string"
+        description: "パスワード"
+  UserCreateResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
+        description: "クライアント側で保存するトークン"
+  UserGetResponse:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "ユーザ名"
+  UserUpdateRequest:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "ユーザ名"
+  UserUpdateResponse:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        description: "ユーザ名"
+  bookCreateRequest:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+  bookGetResponse:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "書籍id"
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+      reviewer:
+        type: "string"
+        description: "レビュー者（ユーザ名）"
+      isMine:
+        type: "boolean"
+        description: "自分の投稿かどうか"
+  bookUpdateRequest:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+  bookUpdateResponse:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "書籍id"
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+      reviewer:
+        type: "string"
+        description: "レビュー者（ユーザ名）"
+      isMine:
+        type: "boolean"
+        description: "自分の投稿かどうか"
+  bookListGetResponse:
+    type: "array"
+    items:
+      $ref: "#/definitions/bookData"
+  bookData:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "書籍id"
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+      reviewer:
+        type: "string"
+        description: "レビュー者（ユーザ名）"
+      isMine:
+        type: "boolean"
+        description: "自分の投稿かどうか"
+  bookListPublicResponse:
+    type: "array"
+    items:
+      $ref: "#/definitions/bookDataPublic"
+  bookDataPublic:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+        description: "書籍id"
+      title:
+        type: "string"
+        description: "書籍タイトル"
+      url:
+        type: "string"
+        description: "書籍情報参照URL"
+      detail:
+        type: "string"
+        description: "書籍詳細情報"
+      review:
+        type: "string"
+        description: "読んだ感想"
+      reviewer:
+        type: "string"
+        description: "レビュー者（ユーザ名）"
+  NotFoundError:
+    type: "object"
+    properties:
+      ErrorCode: 
+        type: "number"
+        description: "エラーコード"
+        example: 404
+      ErrorMessageJP:
+        type: "string"
+        description: "エラーメッセージ（日本語）"
+        example: "その書籍はまだレビューされていません。"
+      ErrorMessageEN:
+        type: "string"
+        description: "エラーメッセージ（英語）"
+        example: "This book is not reviewed yet."
+  UnauthorizedError:
+    type: "object"
+    properties:
+      ErrorCode: 
+        type: "number"
+        description: "エラーコード"
+        example: 403
+      ErrorMessageJP:
+        type: "string"
+        description: "エラーメッセージ（日本語）"
+        example: "認証エラー"
+      ErrorMessageEN:
+        type: "string"
+        description: "エラーメッセージ（英語）"
+        example: "You are not authorized user"
+  BadRequestError:
+    type: "object"
+    properties:
+      ErrorCode: 
+        type: "number"
+        description: "エラーコード"
+        example: 400
+      ErrorMessageJP:
+        type: "string"
+        description: "エラーメッセージ（日本語）"
+        example: "バリデーションエラー"
+      ErrorMessageEN:
+        type: "string"
+        description: "エラーメッセージ（英語）"
+        example: "validation error"
+  InternalServerError:
+    type: "object"
+    properties:
+      ErrorCode: 
+        type: "number"
+        description: "エラーコード"
+        example: 500
+      ErrorMessageJP:
+        type: "string"
+        description: "エラーメッセージ（日本語）"
+        example: "サーバでエラーが発生しました。"
+      ErrorMessageEN:
+        type: "string"
+        description: "エラーメッセージ（英語）"
+        example: "Error occurred at server."
