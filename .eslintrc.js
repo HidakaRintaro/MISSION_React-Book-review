@@ -55,6 +55,12 @@ module.exports = {
     ],
     // MEMO: reduxの state.value = action.payload で代入ができないため
     'no-param-reassign': ['error', { props: false }],
+    'react/jsx-props-no-spreading': [
+      'error',
+      {
+        html: 'ignore',
+      },
+    ],
   },
   settings: {
     'import/resolver': {
