@@ -4,7 +4,7 @@ import { Response } from '~/types/response'
 import { statusOk } from '~/utils/statusOk'
 
 const apiBaseUrl = process.env.API_URL ?? ''
-const responseDefault = { isError: false, error: null, success: null }
+const responseDefault = { error: null, success: null }
 const instance = axios.create({
   baseURL: apiBaseUrl,
   headers: { 'Content-Type': 'application/json' },
@@ -17,7 +17,6 @@ const get = async <T>(url: string, config?: AxiosRequestConfig): Promise<Respons
   if (statusOk(res.status)) {
     result.success = res.data as T
   } else {
-    result.isError = true
     result.error = res.data as errorResponse
   }
   return result
@@ -30,7 +29,6 @@ const post = async <T>(url: string, data?: object, config?: AxiosRequestConfig):
   if (statusOk(res.status)) {
     result.success = res.data as T
   } else {
-    result.isError = true
     result.error = res.data as errorResponse
   }
   return result
@@ -43,7 +41,6 @@ const put = async <T>(url: string, data?: object, config?: AxiosRequestConfig): 
   if (statusOk(res.status)) {
     result.success = res.data as T
   } else {
-    result.isError = true
     result.error = res.data as errorResponse
   }
   return result
@@ -57,7 +54,6 @@ const _delete = async <T>(url: string, config?: AxiosRequestConfig): Promise<Res
   if (statusOk(res.status)) {
     result.success = res.data as T
   } else {
-    result.isError = true
     result.error = res.data as errorResponse
   }
   return result
