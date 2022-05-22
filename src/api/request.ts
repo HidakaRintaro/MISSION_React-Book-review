@@ -3,7 +3,7 @@ import { errorResponse } from '~/types/errorResponse'
 import { Response } from '~/types/response'
 import { statusOk } from '~/utils/statusOk'
 
-const apiBaseUrl = import.meta.env.BASE_URL
+const apiBaseUrl = import.meta.env.VITE_API_URL
 const responseDefault = { error: null, success: null }
 const instance = axios.create({
   baseURL: apiBaseUrl,
