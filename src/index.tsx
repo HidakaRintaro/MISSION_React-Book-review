@@ -7,6 +7,7 @@ import '~/index.css'
 import { store } from '~/store'
 import { SignUp } from '~/pages/SignUp'
 import { Login } from '~/pages/Login'
+import { Books } from '~/pages/Books'
 
 const rootElement = document.getElementById('root')
 const root = createRoot(rootElement as HTMLElement)
@@ -17,6 +18,7 @@ root.render(
         <Routes>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Books />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
