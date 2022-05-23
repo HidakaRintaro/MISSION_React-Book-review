@@ -61,6 +61,8 @@ module.exports = {
         html: 'ignore',
       },
     ],
+    // MEMO: rejectWithValueを使う兼ね合いで作った。対象方がよくわからんかった
+    'consistent-return': ['warn'],
   },
   settings: {
     'import/resolver': {
